@@ -3,12 +3,28 @@ server:
 
 spring:
   datasource:
-    username: root
-    password: 1qaz2wsx
-    url: jdbc:mysql://localhost:33060/demo?useUnicode=true&characterEncoding=UTF-8
-    type: com.alibaba.druid.pool.DruidDataSource
+    mysqldemo:
+      username: root
+      password: 1qaz2wsx
+      url: jdbc:mysql://localhost:33060/demo?useUnicode=true&characterEncoding=UTF-8
+      type: com.alibaba.druid.pool.DruidDataSource
+    oracledemo:
+      username: demo
+      password: 1qaz2wsx
+      url: jdbc:oracle:thin:@127.0.0.1:1521:xe
+      type: com.alibaba.druid.pool.DruidDataSource
   jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-
+    mysql:
+      show-sql: true
+      properties:
+        hibernate:
+          hbm2ddl:
+            auto: update
+          dialect: org.hibernate.dialect.MySQL57Dialect
+    oracle:
+      show-sql: true
+      properties:
+        hibernate:
+          hbm2ddl:
+            auto: update
+          dialect: org.hibernate.dialect.Oracle12cDialect

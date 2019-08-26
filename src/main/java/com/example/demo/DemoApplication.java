@@ -1,7 +1,8 @@
 package com.example.demo;
 
-import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.model.mysql.User;
+import com.example.demo.repository.mysql.UserRepository;
+import com.example.demo.repository.oracle.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +16,8 @@ import java.util.List;
 public class DemoApplication {
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private UserDao userDao;
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
@@ -27,5 +30,14 @@ public class DemoApplication {
 		user.setAddress("深圳");
 		userRepository.save(user);
 		return userRepository.findAll();
+	}
+
+	@RequestMapping("/user1")
+	public List<com.example.demo.model.oracle.User> user1() {
+		com.example.demo.model.oracle.User user1 = new com.example.demo.model.oracle.User();
+		user1.setUserName("demo1");
+		user1.setAddress("深圳");
+		userDao.save(user1);
+		return userDao.findAll();
 	}
 }
