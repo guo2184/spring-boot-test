@@ -1,6 +1,8 @@
 package com.example.demo.config;
 
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
+import com.atomikos.jdbc.AtomikosDataSourceBean;
+import com.mysql.cj.jdbc.MysqlXADataSource;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -10,24 +12,33 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "com.example.demo.repository.mysql",
-        entityManagerFactoryRef = "mysqlManager",
-        transactionManagerRef = "mysqlTransactionManager")
+        entityManagerFactoryRef = "mysqlManager")
+@ConfigurationProperties(prefix = "spring.datasource.mysqldemo")
+@Data
 public class MysqlDemoJpaConfig {
 
+    private String url;
+    private String username;
+    private String password;
+
     @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.mysqldemo")
     @Primary
     DataSource dsMysqlDemo() {
-        return DruidDataSourceBuilder.create().build();
+        MysqlXADataSource xaDataSource = new MysqlXADataSource();
+        xaDataSource.setUrl(url);
+        xaDataSource.setUser(username);
+        xaDataSource.setPassword(password);
+        AtomikosDataSourceBean ds = new AtomikosDataSourceBean();
+        ds.setXaDataSource(xaDataSource);
+        ds.setUniqueResourceName("mysqldemo");
+        return ds;
     }
 
     @Autowired
@@ -48,10 +59,10 @@ public class MysqlDemoJpaConfig {
                 .build();
     }
 
-    @Bean
-    @Primary
-    PlatformTransactionManager mysqlTransactionManager(
-            @Qualifier("mysqlManager") LocalContainerEntityManagerFactoryBean mysqlManager) {
-        return new JpaTransactionManager(mysqlManager.getObject());
-    }
+//    @Bean
+//    @Primary
+//    PlatformTransactionManager mysqlTransactionManager(
+//            @Qualifier("mysqlManager") LocalContainerEntityManagerFactoryBean mysqlManager) {
+//        return new JpaTransactionManager(mysqlManager.getObject());
+//    }
 }

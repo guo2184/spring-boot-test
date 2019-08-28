@@ -17,6 +17,39 @@ public class UserController {
     @Autowired
     private UserDao userDao;
 
+    @RequestMapping("/jtaUser1")
+    @Transactional
+    public List<User> jtaUser1() {
+        User user = new User();
+        user.setUserName("demo");
+        user.setAddress("深圳");
+        userRepository.save(user);
+
+        com.example.demo.model.oracle.User user1 = new com.example.demo.model.oracle.User();
+        user1.setUserName("demo2");
+        user1.setAddress("深圳");
+        userDao.save(user1);
+
+        return userRepository.findAll();
+    }
+
+    @RequestMapping("/jtaUser")
+    @Transactional
+    public List<User> jtaUser() {
+        com.example.demo.model.oracle.User user1 = new com.example.demo.model.oracle.User();
+        user1.setUserName("demo2");
+        user1.setAddress("深圳");
+        userDao.save(user1);
+
+        User user = new User();
+        user.setUserName("demo");
+        user.setAddress("深圳");
+        userRepository.save(user);
+
+        int i = 1 /0;
+        return userRepository.findAll();
+    }
+
     @RequestMapping("/user")
     public List<User> hello() {
         User user = new User();
