@@ -15,6 +15,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "com.example.demo.repository.oracle",
@@ -28,21 +29,18 @@ public class OracleDemoJpaConfig {
         return DruidDataSourceBuilder.create().build();
     }
 
-    @Bean
-    @ConfigurationProperties(prefix = "spring.jpa.oracle")
-    JpaProperties jpaOracleProperties() {
-        return new JpaProperties();
-    };
-
+    @Autowired
+    JpaProperties jpaProperties;
 
     @Bean
     LocalContainerEntityManagerFactoryBean oracleManager(
             EntityManagerFactoryBuilder builder,
-            @Qualifier("jpaOracleProperties") JpaProperties jpaOracleProperties,
             @Qualifier("dsOracleDemo") DataSource dsOracleDemo) {
+        Map<String, String> prop = jpaProperties.getProperties();
+        prop.put("hibernate.dialect", "org.hibernate.dialect.Oracle12cDialect");
         return builder.dataSource(dsOracleDemo)
                 .packages("com.example.demo.model.oracle")
-                .properties(jpaOracleProperties.getProperties())
+                .properties(prop)
                 .persistenceUnit("pu2")
                 .build();
     }

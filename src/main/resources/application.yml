@@ -14,17 +14,8 @@ spring:
       url: jdbc:oracle:thin:@127.0.0.1:1521:xe
       type: com.alibaba.druid.pool.DruidDataSource
   jpa:
-    mysql:
       show-sql: true
       properties:
         hibernate:
           hbm2ddl:
             auto: update
-          dialect: org.hibernate.dialect.MySQL57Dialect
-    oracle:
-      show-sql: true
-      properties:
-        hibernate:
-          hbm2ddl:
-            auto: update
-          dialect: org.hibernate.dialect.Oracle12cDialect

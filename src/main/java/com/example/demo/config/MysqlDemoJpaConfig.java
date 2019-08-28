@@ -15,6 +15,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "com.example.demo.repository.mysql",
@@ -29,23 +30,20 @@ public class MysqlDemoJpaConfig {
         return DruidDataSourceBuilder.create().build();
     }
 
-    @Bean
-    @ConfigurationProperties(prefix = "spring.jpa.mysql")
-    @Primary
-    JpaProperties jpaMysqlProperties() {
-        return new JpaProperties();
-    };
+    @Autowired
+    JpaProperties jpaProperties;
 
 
     @Bean
     @Primary
     LocalContainerEntityManagerFactoryBean mysqlManager(
             EntityManagerFactoryBuilder builder,
-            @Qualifier("jpaMysqlProperties") JpaProperties jpaMysqlProperties,
             @Qualifier("dsMysqlDemo") DataSource dsMysqlDemo) {
+        Map<String, String> prop = jpaProperties.getProperties();
+        prop.put("hibernate.dialect", "org.hibernate.dialect.MySQL57Dialect");
         return builder.dataSource(dsMysqlDemo)
                 .packages("com.example.demo.model.mysql")
-                .properties(jpaMysqlProperties.getProperties())
+                .properties(prop)
                 .persistenceUnit("pu1")
                 .build();
     }
